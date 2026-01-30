@@ -3,124 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ 나만의 성격 유형 찾기 ✨</title>
+    <title>Pro-Personality Analysis | 정밀 성격 진단</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6c5ce7;
-            --bg: #f9f9fb;
-            --card: #ffffff;
+            --primary: #4834d4;
+            --secondary: #686de0;
+            --accent: #ff7979;
+            --bg: #f0f2f5;
+            --text: #2d3436;
         }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; }
-        
-        /* Layout */
-        #test-container { max-width: 500px; width: 90%; margin: 50px auto; text-align: center; }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
         .hidden { display: none; }
 
         /* Progress Bar */
-        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-bottom: 30px; }
-        #progress { width: 0%; height: 100%; background: var(--primary); border-radius: 5px; transition: 0.3s; }
-
-        /* Card Style */
-        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        button { 
-            width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; 
-            background: #f0f0f6; cursor: pointer; font-size: 16px; transition: 0.2s;
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #dfe6e9;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            position: sticky;
+            top: 20px;
         }
-        button:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+        #progress-inner {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-        /* Result Style */
-        #result-emoji { font-size: 80px; margin-bottom: 10px; }
-        #result-title { font-size: 24px; font-weight: bold; color: var(--primary); }
+        /* Question Section */
+        .question-card h2 { font-size: 1.2rem; color: #636e72; margin-bottom: 10px; }
+        .question-text { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; word-break: keep-all; }
+        
+        .btn-option {
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #edeff2;
+            border-radius: 15px;
+            background: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .btn-option:hover {
+            border-color: var(--primary);
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        /* Result Section */
+        .result-header { text-align: center; margin-bottom: 40px; }
+        .result-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .result-mbti { font-size: 3rem; font-weight: 900; color: var(--primary); margin: 0; }
+        .result-nickname { font-size: 1.5rem; color: #636e72; }
+
+        .analysis-box {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .analysis-box h3 { border-left: 5px solid var(--primary); padding-left: 10px; margin-top: 0; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { background: white; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; border: 1px solid #ddd; }
+
+        .point-list { padding-left: 20px; }
+        .point-list li { margin-bottom: 10px; }
+        .pros { color: #2ecc71; }
+        .cons { color: #e74c3c; }
+
+        .restart-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
 
-<div id="test-container">
-    <div id="start-screen" class="card">
-        <h1>🔍 MBTI 테스트</h1>
-        <p>32개의 문항으로 나의 진짜 모습을 찾아보세요!</p>
-        <button onclick="startTest()">테스트 시작하기</button>
+<div id="app">
+    <div id="intro">
+        <h1 style="text-align:center; font-size: 2.5rem;">🧠<br>정밀 성격 분석</h1>
+        <p style="text-align:center; color: #636e72;">32개의 문항을 통해 당신의 심리 기저와<br>행동 패턴을 심층 분석합니다.</p>
+        <button class="restart-btn" onclick="startTest()">분석 시작하기</button>
     </div>
 
-    <div id="quiz-screen" class="hidden">
-        <div class="progress-container"><div id="progress"></div></div>
-        <div class="card">
-            <h2 id="question-number">Q1.</h2>
-            <p id="question-text">질문이 여기에 표시됩니다.</p>
+    <div id="quiz" class="hidden">
+        <div class="progress-bar"><div id="progress-inner"></div></div>
+        <div class="question-card">
+            <h2 id="q-num">Q.01</h2>
+            <div id="q-text" class="question-text">질문 로딩 중...</div>
             <div id="options">
-                <button onclick="answer(1)" id="opt1">선택지 1</button>
-                <button onclick="answer(0)" id="opt2">선택지 2</button>
+                <button class="btn-option" onclick="handleAnswer('A')" id="opt-a">선택지 A</button>
+                <button class="btn-option" onclick="handleAnswer('B')" id="opt-b">선택지 B</button>
             </div>
         </div>
     </div>
 
-    <div id="result-screen" class="hidden card">
-        <h2>심리분석 결과</h2>
-        <div id="result-emoji">🤔</div>
-        <div id="result-title">유형 이름</div>
-        <p id="result-desc">상세 설명이 여기에 들어갑니다.</p>
-        <button onclick="location.reload()">다시 하기 🔄</button>
+    <div id="result" class="hidden">
+        <div class="result-header">
+            <span class="result-emoji" id="res-emoji">🚀</span>
+            <h1 class="result-mbti" id="res-mbti">ENTP</h1>
+            <div class="result-nickname" id="res-nickname">뜨거운 논쟁을 즐기는 변론가</div>
+        </div>
+
+        <div class="analysis-box">
+            <h3>💡 주요 특징</h3>
+            <div id="res-tags" class="tag-container"></div>
+            <p id="res-desc" style="margin-top:15px;"></p>
+        </div>
+
+        <div class="analysis-box">
+            <h3 class="pros">✅ 강점 (Strengths)</h3>
+            <ul id="res-pros" class="point-list"></ul>
+        </div>
+
+        <div class="analysis-box">
+            <h3 class="cons">⚠️ 약점 (Weaknesses)</h3>
+            <ul id="res-cons" class="point-list"></ul>
+        </div>
+
+        <div class="analysis-box" style="border: 2px dashed var(--accent);">
+            <h3>🛠️ 성장 보완점</h3>
+            <ul id="res-advice" class="point-list"></ul>
+        </div>
+
+        <button class="restart-btn" onclick="location.reload()">테스트 다시하기</button>
     </div>
 </div>
 
 <script>
-    // 32개 문항 (예시 데이터 - 4가지 지표별로 8문제씩)
+    /* 1. 질문 데이터베이스 (32문항) */
     const questions = [
-        { q: "주말에 나는?", a: "사람들을 만나며 에너지를 얻는다", b: "집에서 혼자 쉬는 게 최고다", type: "EI" },
-        { q: "새로운 사람을 만날 때?", a: "먼저 말을 거는 편이다", b: "상대방이 말을 걸 때까지 기다린다", type: "EI" },
-        // ... 실제 개발 시 32개를 채워주세요!
+        // E vs I (8문항)
+        { q: "새로운 사람들과 가득 찬 파티에 갔을 때 나는?", a: "모르는 사람에게도 쉽게 말을 걸며 즐긴다", b: "아는 사람들 곁에 머물며 조용히 관찰한다", type: "EI" },
+        { q: "에너지가 방전되었을 때 충전하는 방법은?", a: "친구들을 만나 수다를 떨며 푼다", b: "혼자 방에서 넷플릭스를 보며 쉰다", type: "EI" },
+        // ... (중략: 실제 구현시 32개 배치)
+        // S vs N (8문항)
+        { q: "사과를 보면 드는 생각은?", a: "빨갛고 맛있겠다. 아삭한 식감이 떠오른다.", b: "스티브 잡스, 백설공주, 뉴턴의 사과가 떠오른다.", type: "SN" },
+        // T vs F (8문항)
+        { q: "친구가 '나 우울해서 쇼핑했어'라고 한다면?", a: "뭐 샀어? 예쁜 거 샀어?", b: "왜 우울했어? 무슨 일 있었어?", type: "TF" },
+        // J vs P (8문항)
+        { q: "여행을 가기 전 나의 모습은?", a: "시간 단위로 계획을 짜야 마음이 편하다", b: "숙소만 정하고 나머지는 가서 생각한다", type: "JP" }
     ];
 
+    // 테스트용 32문항 확장 (데이터 예시 중복 포함)
+    while(questions.length < 32) questions.push({...questions[Math.floor(Math.random()*4)]});
+
+    /* 2. 결과 해설 데이터베이스 */
+    const resultDB = {
+        "ENFP": {
+            emoji: "✨", nickname: "재기발랄한 활동가",
+            tags: ["창의적", "열정적", "자유로운영혼", "사교가"],
+            desc: "타인과 정서적으로 교감하며 에너지를 얻는 유형입니다. 가능성을 포착하는 능력이 뛰어납니다.",
+            pros: ["어떤 환경에서도 적응이 빠름", "타인의 잠재력을 발견해줌", "공감 능력이 매우 뛰어남"],
+            cons: ["반복적인 일상 업무에 쉽게 질림", "감정 기복이 심해질 수 있음", "결정 장애를 겪는 경우가 많음"],
+            advice: ["세부 사항을 끝까지 챙기는 연습이 필요합니다.", "감정에 압도될 때 객관적인 사실을 보는 훈련을 하세요."]
+        },
+        "ISTJ": {
+            emoji: "🛡️", nickname: "청렴결백한 논리주의자",
+            tags: ["책임감", "철저함", "현실적", "보수적"],
+            desc: "가정이나 조직 내에서 핵심적인 역할을 수행하며 질서와 규칙을 준수하는 것을 선호합니다.",
+            pros: ["맡은 일은 끝까지 완수함", "기억력이 좋고 정확함", "감정에 치우치지 않는 공정한 판단"],
+            cons: ["변화에 다소 보수적일 수 있음", "타인의 감정적 호소를 이해하기 힘들어함", "지나치게 원칙에 얽매임"],
+            advice: ["새로운 방식의 효율성을 인정하려 노력해보세요.", "가끔은 타인의 감정을 논리보다 우선시해 보세요."]
+        },
+        // 나머지 유형 생략... (실제 서비스시 16개 전체 구축)
+    };
+
     let currentIdx = 0;
-    let score = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+    let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
 
     function startTest() {
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('quiz-screen').classList.remove('hidden');
-        showQuestion();
+        document.getElementById('intro').classList.add('hidden');
+        document.getElementById('quiz').classList.remove('hidden');
+        renderQuestion();
     }
 
-    function showQuestion() {
+    function renderQuestion() {
         const q = questions[currentIdx];
-        document.getElementById('question-number').innerText = `Q${currentIdx + 1}.`;
-        document.getElementById('question-text').innerText = q.q;
-        document.getElementById('opt1').innerText = q.a;
-        document.getElementById('opt2').innerText = q.b;
-        document.getElementById('progress').style.width = `${((currentIdx) / questions.length) * 100}%`;
+        document.getElementById('q-num').innerText = `Q.${String(currentIdx + 1).padStart(2, '0')}`;
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('opt-a').innerText = q.a;
+        document.getElementById('opt-b').innerText = q.b;
+        document.getElementById('progress-inner').style.width = `${(currentIdx / questions.length) * 100}%`;
+        window.scrollTo(0,0);
     }
 
-    function answer(isA) {
+    function handleAnswer(choice) {
         const type = questions[currentIdx].type;
-        if (isA) score[type[0]]++;
-        else score[type[1]]++;
+        if (choice === 'A') scores[type[0]]++;
+        else scores[type[1]]++;
 
         currentIdx++;
-        if (currentIdx < questions.length) showQuestion();
-        else showResult();
+        if (currentIdx < questions.length) renderQuestion();
+        else calculateResult();
     }
 
-    function showResult() {
-        document.getElementById('quiz-screen').classList.add('hidden');
-        const res = document.getElementById('result-screen');
-        res.classList.remove('hidden');
-
+    function calculateResult() {
         let mbti = "";
-        mbti += score.E >= score.I ? "E" : "I";
-        mbti += score.S >= score.N ? "S" : "N";
-        mbti += score.T >= score.F ? "T" : "F";
-        mbti += score.J >= score.P ? "J" : "P";
+        mbti += scores.E >= scores.I ? "E" : "I";
+        mbti += scores.S >= scores.N ? "S" : "N";
+        mbti += scores.T >= scores.F ? "T" : "F";
+        mbti += scores.J >= scores.P ? "J" : "P";
 
-        const data = {
-            "ENFP": { emoji: "🎨", title: "재기발랄한 활동가", desc: "자유로운 영혼이며 창의적입니다!" },
-            "ISTJ": { emoji: "📏", title: "청렴결백한 논리주의자", desc: "질서와 규칙을 중시하는 현실주의자입니다." },
-            // 나머지 14개 유형도 여기에 추가
+        showResult(mbti);
+    }
+
+    function showResult(mbti) {
+        document.getElementById('quiz').classList.add('hidden');
+        const resView = document.getElementById('result');
+        resView.classList.remove('hidden');
+
+        const data = resultDB[mbti] || resultDB["ENFP"]; // 예시용 기본값
+
+        document.getElementById('res-mbti').innerText = mbti;
+        document.getElementById('res-emoji').innerText = data.emoji;
+        document.getElementById('res-nickname').innerText = data.nickname;
+        document.getElementById('res-desc').innerText = data.desc;
+
+        // Tags
+        const tagContainer = document.getElementById('res-tags');
+        tagContainer.innerHTML = data.tags.map(t => `<span class="tag">#${t}</span>`).join('');
+
+        // Pros, Cons, Advice
+        const renderList = (id, list) => {
+            document.getElementById(id).innerHTML = list.map(item => `<li>${item}</li>`).join('');
         };
+        renderList('res-pros', data.pros);
+        renderList('res-cons', data.cons);
+        renderList('res-advice', data.advice);
 
-        const result = data[mbti] || { emoji: "✨", title: mbti, desc: "당신은 아주 특별한 성격의 소유자군요!" };
-        document.getElementById('result-emoji').innerText = result.emoji;
-        document.getElementById('result-title').innerText = `${mbti} - ${result.title}`;
-        document.getElementById('result-desc').innerText = result.desc;
+        window.scrollTo(0,0);
     }
 </script>
+
 </body>
 </html>
