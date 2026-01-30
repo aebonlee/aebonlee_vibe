@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 나만의 성격 유형 찾기 ✨</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --bg: #f9f9fb;
+            --card: #ffffff;
+        }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Layout */
+        #test-container { max-width: 500px; width: 90%; margin: 50px auto; text-align: center; }
+        .hidden { display: none; }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-bottom: 30px; }
+        #progress { width: 0%; height: 100%; background: var(--primary); border-radius: 5px; transition: 0.3s; }
+
+        /* Card Style */
+        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        button { 
+            width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; 
+            background: #f0f0f6; cursor: pointer; font-size: 16px; transition: 0.2s;
+        }
+        button:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+
+        /* Result Style */
+        #result-emoji { font-size: 80px; margin-bottom: 10px; }
+        #result-title { font-size: 24px; font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div id="test-container">
+    <div id="start-screen" class="card">
+        <h1>🔍 MBTI 테스트</h1>
+        <p>32개의 문항으로 나의 진짜 모습을 찾아보세요!</p>
+        <button onclick="startTest()">테스트 시작하기</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="progress-container"><div id="progress"></div></div>
+        <div class="card">
+            <h2 id="question-number">Q1.</h2>
+            <p id="question-text">질문이 여기에 표시됩니다.</p>
+            <div id="options">
+                <button onclick="answer(1)" id="opt1">선택지 1</button>
+                <button onclick="answer(0)" id="opt2">선택지 2</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="hidden card">
+        <h2>심리분석 결과</h2>
+        <div id="result-emoji">🤔</div>
+        <div id="result-title">유형 이름</div>
+        <p id="result-desc">상세 설명이 여기에 들어갑니다.</p>
+        <button onclick="location.reload()">다시 하기 🔄</button>
+    </div>
+</div>
+
+<script>
+    // 32개 문항 (예시 데이터 - 4가지 지표별로 8문제씩)
+    const questions = [
+        { q: "주말에 나는?", a: "사람들을 만나며 에너지를 얻는다", b: "집에서 혼자 쉬는 게 최고다", type: "EI" },
+        { q: "새로운 사람을 만날 때?", a: "먼저 말을 거는 편이다", b: "상대방이 말을 걸 때까지 기다린다", type: "EI" },
+        // ... 실제 개발 시 32개를 채워주세요!
+    ];
+
+    let currentIdx = 0;
+    let score = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+    function startTest() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById('question-number').innerText = `Q${currentIdx + 1}.`;
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('opt1').innerText = q.a;
+        document.getElementById('opt2').innerText = q.b;
+        document.getElementById('progress').style.width = `${((currentIdx) / questions.length) * 100}%`;
+    }
+
+    function answer(isA) {
+        const type = questions[currentIdx].type;
+        if (isA) score[type[0]]++;
+        else score[type[1]]++;
+
+        currentIdx++;
+        if (currentIdx < questions.length) showQuestion();
+        else showResult();
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        const res = document.getElementById('result-screen');
+        res.classList.remove('hidden');
+
+        let mbti = "";
+        mbti += score.E >= score.I ? "E" : "I";
+        mbti += score.S >= score.N ? "S" : "N";
+        mbti += score.T >= score.F ? "T" : "F";
+        mbti += score.J >= score.P ? "J" : "P";
+
+        const data = {
+            "ENFP": { emoji: "🎨", title: "재기발랄한 활동가", desc: "자유로운 영혼이며 창의적입니다!" },
+            "ISTJ": { emoji: "📏", title: "청렴결백한 논리주의자", desc: "질서와 규칙을 중시하는 현실주의자입니다." },
+            // 나머지 14개 유형도 여기에 추가
+        };
+
+        const result = data[mbti] || { emoji: "✨", title: mbti, desc: "당신은 아주 특별한 성격의 소유자군요!" };
+        document.getElementById('result-emoji').innerText = result.emoji;
+        document.getElementById('result-title').innerText = `${mbti} - ${result.title}`;
+        document.getElementById('result-desc').innerText = result.desc;
+    }
+</script>
+</body>
+</html>
